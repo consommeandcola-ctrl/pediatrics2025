@@ -1,6 +1,6 @@
 {
   "name": "Kagoshima Doctor Car PWA",
-  "short_name": "DoctorCar",
+  "short_name": "小児薬剤",
   "start_url": ".",
   "display": "standalone",
   "background_color": "#ffffff",
@@ -26,3 +26,4 @@
     }
   ]
 }
+
