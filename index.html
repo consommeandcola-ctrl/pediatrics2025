@@ -3,8 +3,6 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-<link rel="manifest" href="manifext.json">
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <title>小児救急｜薬剤投与量・器材サイズ 統合ツール v5（詳細版）</title>
 <style>
   :root{
@@ -114,18 +112,21 @@
 
         <div class="grid">
           <div class="grid two">
-            <div>
-              <label class="k">年齢（歳）</label>
-              <select id="age" class="btn ghost" style="width:100%">
-                <option value="">選択してください</option>
-                <option value="0">0歳（乳児）</option>
-                <option value="1">1歳</option><option value="2">2歳</option>
-                <option value="3">3歳</option><option value="4">4歳</option><option value="5">5歳</option>
-                <option value="6">6歳</option><option value="7">7歳</option><option value="8">8歳</option>
-                <option value="9">9歳</option><option value="10">10歳</option><option value="11">11歳</option>
-                <option value="12">12歳</option><option value="13">13歳</option><option value="14">14歳</option><option value="15">15歳</option>
-                <option value="16">16歳以上（成人）</option>
-              </select>
+            <div style="display:flex;align-items:flex-end;gap:8px;flex-wrap:wrap">
+              <div style="flex:1;min-width:150px">
+                <label class="k">年齢（歳）</label>
+                <select id="age" class="btn ghost" style="width:100%">
+                  <option value="">選択してください</option>
+                  <option value="0">0歳（乳児）</option>
+                  <option value="1">1歳</option><option value="2">2歳</option>
+                  <option value="3">3歳</option><option value="4">4歳</option><option value="5">5歳</option>
+                  <option value="6">6歳</option><option value="7">7歳</option><option value="8">8歳</option>
+                  <option value="9">9歳</option><option value="10">10歳</option><option value="11">11歳</option>
+                  <option value="12">12歳</option><option value="13">13歳</option><option value="14">14歳</option><option value="15">15歳</option>
+                  <option value="16">16歳以上（成人）</option>
+                </select>
+              </div>
+              <span id="estBox" style="display:none;font-size:12px;font-weight:700;color:#1f2937;white-space:nowrap;padding-bottom:8px;flex-shrink:0">推定体重<span id="estW">-</span>kg（<span id="estFormula">-</span>の年齢別平均値データ参照）</span>
             </div>
             <div id="monthWrap" style="display:none">
               <label class="k">月齢（0歳の場合）</label>
@@ -149,7 +150,6 @@
             </div>
             <div class="pillset" style="margin-top:6px">
               <button class="btn small ghost" id="clearWeight">クリア</button>
-              <span id="estBox" class="hint" style="display:none">⚠️ 推定体重使用中：<b id="estW">-</b> kg</span>
             </div>
           </div>
 
@@ -170,35 +170,59 @@
           <div class="block">
             <h3>⚡ 除細動（計算値）</h3>
             <div class="body">
-              <div class="hl">
-                <div class="k">4J/kg（二相性）</div>
-                <div style="font-size:24px;font-weight:900"><span id="defib">-</span> J</div>
+              <div class="hl" style="display:flex;justify-content:space-between;align-items:center">
+                <div style="flex:1">
+                  <div class="k">4J/kg（二相性）</div>
+                  <div style="font-size:24px;font-weight:900"><span id="defib">-</span> J</div>
+                </div>
+                <div style="font-size:24px;font-weight:900;text-align:right">ダイヤル設定：<span id="defibDial">-</span></div>
               </div>
-              <div class="hint" style="margin-top:4px">体重×4（J）・上限150J</div>
+              <div class="hint" style="margin-top:4px">体重×4（J）・上限150J（成人初回は150J推奨）</div>
             </div>
           </div>
 
           <div class="block">
             <h3>💊 アドレナリン（蘇生）</h3>
             <div class="body">
-              <div class="row"><div class="k">アドレナリン 0.01mg/kg（1mg/mL）</div><div class="v"><span id="epi">-</span> mL</div></div>
-              <div class="hint" style="margin-top:4px">静脈内/骨髄内投与・ボスミン注0.1%原液</div>
+              <div class="row" style="display:grid;grid-template-columns:1fr auto 1fr 1fr;gap:8px;align-items:center">
+                <div class="k">アドレナリン 0.01mg/kg</div>
+                <div style="font-weight:800;font-size:13px;text-align:center"><span id="epiMg">-</span> mg</div>
+                <div class="v" style="text-align:right;font-size:11px">原液: <span id="epi">-</span> mL</div>
+                <div class="v" style="text-align:right;font-size:11px">希釈: <span id="epiDil">-</span> mL</div>
+              </div>
+              <div class="hint" style="margin-top:4px">静脈内/骨髄内投与・原液（1mg/mL）または希釈液（1mg/10mL）</div>
             </div>
           </div>
 
           <div class="block">
             <h3>💉 けいれん（計算）</h3>
             <div class="body">
-              <div class="row"><div class="k">ジアゼパム 0.3–0.5mg/kg（5mg/mL）</div><div class="v"><span id="dzp">-</span> mL</div></div>
-              <div class="row"><div class="k">ミダゾラム 0.15–0.3mg/kg（5mg/mL）</div><div class="v"><span id="mdz">-</span> mL</div></div>
-              <div class="row"><div class="k">ミダゾラム（点鼻）0.3mg/kg（5mg/mL）</div><div class="v"><span id="mdzNasal">-</span> mL</div></div>
+              <div class="row" style="display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center">
+                <div class="k">ジアゼパム 0.3–0.5mg/kg（5mg/mL）</div>
+                <div style="font-weight:800;font-size:13px;text-align:center"><span id="dzpMg">-</span> mg</div>
+                <div class="v" style="text-align:right"><span id="dzp">-</span> mL</div>
+              </div>
+              <div class="row" style="display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center">
+                <div class="k">ミダゾラム 0.15–0.3mg/kg（5mg/mL）</div>
+                <div style="font-weight:800;font-size:13px;text-align:center"><span id="mdzMg">-</span> mg</div>
+                <div class="v" style="text-align:right"><span id="mdz">-</span> mL</div>
+              </div>
+              <div class="row" style="display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center">
+                <div class="k">ミダゾラム（点鼻）0.3mg/kg（5mg/mL）</div>
+                <div style="font-weight:800;font-size:13px;text-align:center"><span id="mdzNasalMg">-</span> mg</div>
+                <div class="v" style="text-align:right"><span id="mdzNasal">-</span> mL</div>
+              </div>
             </div>
           </div>
 
           <div class="block">
             <h3>🤧 アナフィラキシー（計算）</h3>
             <div class="body">
-              <div class="row"><div class="k">アドレナリン 0.01mg/kg（1mg/mL）</div><div class="v"><span id="epiAna">-</span> mL</div></div>
+              <div class="row" style="display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center">
+                <div class="k">アドレナリン 0.01mg/kg（1mg/mL）</div>
+                <div style="font-weight:800;font-size:13px;text-align:center"><span id="epiAnaMg">-</span> mg</div>
+                <div class="v" style="text-align:right"><span id="epiAna">-</span> mL</div>
+              </div>
               <div class="hint" style="margin-top:4px">大腿筋注・ボスミン注0.1%原液</div>
             </div>
           </div>
@@ -237,12 +261,12 @@ const REF = {
   neonate: {
     label:"新生児・乳児", color:"#e694a0", range:"3–5kg", age:"0–2か月", baseWt:4,
     vitals:{ resp:"非緊急: 30–60 / 蘇生: 10以下", pulse:"非緊急: 90–180 / 蘇生: 40以下", lowBP:"収縮期 70以下" },
-    equip:{ ambu:"500mL", laryngoscope:"#1 直型", aws:"新生児(N)・青", tube:"3.0mm（カフなし）", depth:"9.0cm（口角）", stylet:"6F", suction:"6F" },
+    equip:{ ambu:"500mL", laryngoscope:"#1 直型", aws:"新生児(N)・青", macgrath:"AO3・MAC1", tube:"3.0mm（カフなし）", depth:"9.0cm（口角）", stylet:"6F", suction:"6F" },
     defib:{ biphasic:"10J", sync:"5J" },
     drugs:{
       arrest:{
         adrenaline:{val:"0.4 mL", prep:"注0.1%(1mg/mL)原液1mL + 生食9mL", calc:"0.01mg/kg = 0.4mL"},
-        amiodarone:{val:"8.0 mL", prep:"注150mg/3mL原液1mL + 5%ブドウ糖20mL", calc:"5mg/kg = 8.0mL"},
+        amiodarone:{val:"8.0 mL", prep:"注150mg/3mL原液1mL + 5%ブドウ糖20mL", calc:"5mg/kg"},
         atp:{val:"0.1 mL", prep:"ATP-Lコーワ注(10mg)原液", calc:"0.1mL"},
         lidocaine:{val:"0.2 mL", prep:"静注用キシロカイン2%原液", calc:"1mg/kg = 0.2mL"},
         atropine:{val:"1.0 mL", prep:"注0.05%(0.5mg/mL)原液1mL + 生食4mL", calc:"0.02mg/kg = 1.0mL"},
@@ -254,10 +278,11 @@ const REF = {
         atropine:{val:"1.0 mL", prep:"注0.05%(0.5mg/mL)原液1mL + 生食4mL", calc:"0.02mg/kg"},
         midazolam:{val:"0.4 mL", prep:"注10mg/2mL(5mg/mL)原液2mL + 生食8mL", calc:"0.1mg/kg"},
         pentazocine:{val:"2.0 mL", prep:"注15mg/mL原液1mL + 生食14mL", calc:"0.5mg/kg"},
+        fentanyl:{val:"4–8mcg, 0.08–0.16mL", prep:"フェンタニル注100mcg/2mL(50mcg/mL)原液", calc:"1–2mcg/kg"},
         rocuronium:{val:"0.4 mL", prep:"臭化物注50mg/5mL(10mg/mL)原液", calc:"1mg/kg"}
       },
       seizure:{
-        iv:{val:"0.8 mL", prep:"ミダフレッサ静注10mg/10mL(1mg/mL)原液", calc:"0.2mg/kg"},
+        iv:{val:"0.8 mL", prep:"10倍希釈ミダゾラム注（ミダゾラム注10mg/2mL(5mg/mL)1mL + 生食9mL = 1mg/mL）", calc:"0.2mg/kg"},
         nasal:{val:"0.3 mL", prep:"ミダゾラム注10mg/2mL(5mg/mL)原液", calc:"点鼻用"}
       },
       anaphylaxis:{val:"0.1 mL", prep:"ボスミン注0.1%原液", calc:"0.01mg/kg・大腿筋注"}
@@ -266,7 +291,7 @@ const REF = {
   inf1: {
     label:"乳児(1)", color:"#284a9b", range:"6–7kg", age:"3–5か月", baseWt:6,
     vitals:{ resp:"非緊急: 30–60 / 蘇生: 10以下", pulse:"非緊急: 80–160 / 蘇生: 40以下", lowBP:"収縮期 70以下" },
-    equip:{ ambu:"500mL", laryngoscope:"#1 直型", aws:"新生児(N)・青", tube:"3.5mm（カフなし）", depth:"10.5cm（口角）", stylet:"6F", suction:"8F" },
+    equip:{ ambu:"500mL", laryngoscope:"#1 直型", aws:"新生児(N)・青", macgrath:"AO3・MAC1", tube:"3.5mm（カフなし）", depth:"10.5cm（口角）", stylet:"6F", suction:"8F" },
     defib:{ biphasic:"15J", sync:"10J" },
     drugs:{
       arrest:{
@@ -283,10 +308,11 @@ const REF = {
         atropine:{val:"1.2 mL", prep:"注0.05%(0.5mg/mL)原液1mL + 生食4mL", calc:"0.02mg/kg"},
         midazolam:{val:"0.6 mL", prep:"注10mg/2mL(5mg/mL)原液2mL + 生食8mL", calc:"0.1mg/kg"},
         pentazocine:{val:"3.0 mL", prep:"注15mg/mL原液1mL + 生食14mL", calc:"0.5mg/kg"},
+        fentanyl:{val:"6–12mcg, 0.12–0.24mL", prep:"フェンタニル注100mcg/2mL(50mcg/mL)原液", calc:"1–2mcg/kg"},
         rocuronium:{val:"0.6 mL", prep:"臭化物注50mg/5mL(10mg/mL)原液", calc:"1mg/kg"}
       },
       seizure:{
-        iv:{val:"1.2 mL", prep:"ミダフレッサ静注10mg/10mL(1mg/mL)原液", calc:"0.2mg/kg"},
+        iv:{val:"1.2 mL", prep:"10倍希釈ミダゾラム注（ミダゾラム注10mg/2mL(5mg/mL)1mL + 生食9mL = 1mg/mL）", calc:"0.2mg/kg"},
         nasal:{val:"0.4 mL", prep:"ミダゾラム注10mg/2mL(5mg/mL)原液", calc:"点鼻用"}
       },
       anaphylaxis:{val:"0.1 mL", prep:"ボスミン注0.1%原液", calc:"0.01mg/kg・大腿筋注"}
@@ -295,7 +321,7 @@ const REF = {
   inf2: {
     label:"乳児(2)", color:"#c53045", range:"8–9kg", age:"6か月–1歳0か月", baseWt:8,
     vitals:{ resp:"非緊急: 25–45 / 蘇生: 10以下", pulse:"非緊急: 80–140 / 蘇生: 40以下", lowBP:"収縮期 70以下" },
-    equip:{ ambu:"500mL", laryngoscope:"#1 直型", aws:"新生児(N)・青", tube:"3.5mm（カフなし）", depth:"10.5cm（口角）", stylet:"6F", suction:"8F" },
+    equip:{ ambu:"500mL", laryngoscope:"#1 直型", aws:"新生児(N)・青", macgrath:"AO3・MAC1", tube:"3.5mm（カフなし）", depth:"10.5cm（口角）", stylet:"6F", suction:"8F" },
     defib:{ biphasic:"20J", sync:"10J" },
     drugs:{
       arrest:{
@@ -312,10 +338,11 @@ const REF = {
         atropine:{val:"1.6 mL", prep:"注0.05%(0.5mg/mL)原液1mL + 生食4mL", calc:"0.02mg/kg"},
         midazolam:{val:"0.8 mL", prep:"注10mg/2mL(5mg/mL)原液2mL + 生食8mL", calc:"0.1mg/kg"},
         pentazocine:{val:"4.0 mL", prep:"注15mg/mL原液1mL + 生食14mL", calc:"0.5mg/kg"},
+        fentanyl:{val:"8–16mcg, 0.16–0.32mL", prep:"フェンタニル注100mcg/2mL(50mcg/mL)原液", calc:"1–2mcg/kg"},
         rocuronium:{val:"0.8 mL", prep:"臭化物注50mg/5mL(10mg/mL)原液", calc:"1mg/kg"}
       },
       seizure:{
-        iv:{val:"1.6 mL", prep:"ミダフレッサ静注10mg/10mL(1mg/mL)原液", calc:"0.2mg/kg"},
+        iv:{val:"1.6 mL", prep:"10倍希釈ミダゾラム注（ミダゾラム注10mg/2mL(5mg/mL)1mL + 生食9mL = 1mg/mL）", calc:"0.2mg/kg"},
         nasal:{val:"0.5 mL", prep:"ミダゾラム注10mg/2mL(5mg/mL)原液", calc:"点鼻用"}
       },
       anaphylaxis:{val:"0.1 mL", prep:"ボスミン注0.1%原液", calc:"0.01mg/kg・大腿筋注"}
@@ -324,12 +351,12 @@ const REF = {
   tod1: {
     label:"幼児(1)", color:"#8b5cf6", range:"10–11kg", age:"1歳1か月–1歳11か月", baseWt:10,
     vitals:{ resp:"非緊急: 20–30 / 蘇生: 10以下", pulse:"非緊急: 75–130 / 蘇生: 40以下", lowBP:"収縮期 72以下" },
-    equip:{ ambu:"1000mL", laryngoscope:"#1 直型", aws:"小児(P)・ピンク", tube:"4.0mm（カフなし）", depth:"12.0cm（口角）", stylet:"6F", suction:"8F" },
+    equip:{ ambu:"1000mL", laryngoscope:"#1 直型", aws:"小児(P)・ピンク", macgrath:"MAC2", tube:"4.0mm（カフなし）", depth:"12.0cm（口角）", stylet:"6F", suction:"8F" },
     defib:{ biphasic:"30J", sync:"15J" },
     drugs:{
       arrest:{
         adrenaline:{val:"1.0 mL", prep:"注0.1%(1mg/mL)原液1mL + 生食9mL", calc:"0.01mg/kg"},
-        amiodarone:{val:"11 mL", prep:"注150mg/3mL原液2mL + 5%ブドウ糖20mL", calc:"5mg/kg"},
+        amiodarone:{val:"11 mL", prep:"注150mg/3mL原液2mL + 5%ブドウ糖20mL", calc:"2mg/kg"},
         atp:{val:"0.2 mL", prep:"ATP-Lコーワ注(10mg)原液", calc:"0.2mL"},
         lidocaine:{val:"0.5 mL", prep:"静注用キシロカイン2%原液", calc:"1mg/kg"},
         atropine:{val:"2.0 mL", prep:"注0.05%(0.5mg/mL)原液1mL + 生食4mL", calc:"0.02mg/kg"},
@@ -341,10 +368,11 @@ const REF = {
         atropine:{val:"2.0 mL", prep:"注0.05%(0.5mg/mL)原液1mL + 生食4mL", calc:"0.02mg/kg"},
         midazolam:{val:"1.0 mL", prep:"注10mg/2mL(5mg/mL)原液2mL + 生食8mL", calc:"0.1mg/kg"},
         pentazocine:{val:"5.0 mL", prep:"注15mg/mL原液1mL + 生食14mL", calc:"0.5mg/kg"},
+        fentanyl:{val:"10–20mcg, 0.20–0.40mL", prep:"フェンタニル注100mcg/2mL(50mcg/mL)原液", calc:"1–2mcg/kg"},
         rocuronium:{val:"1.0 mL", prep:"臭化物注50mg/5mL(10mg/mL)原液", calc:"1mg/kg"}
       },
       seizure:{
-        iv:{val:"2.0 mL", prep:"ミダフレッサ静注10mg/10mL(1mg/mL)原液", calc:"0.2mg/kg"},
+        iv:{val:"2.0 mL", prep:"10倍希釈ミダゾラム注（ミダゾラム注10mg/2mL(5mg/mL)1mL + 生食9mL = 1mg/mL）", calc:"0.2mg/kg"},
         nasal:{val:"0.6 mL", prep:"ミダゾラム注10mg/2mL(5mg/mL)原液", calc:"点鼻用"}
       },
       anaphylaxis:{val:"0.1 mL", prep:"ボスミン注0.1%原液", calc:"0.01mg/kg・大腿筋注"}
@@ -353,12 +381,12 @@ const REF = {
   tod2: {
     label:"幼児(2)", color:"#facc15", range:"12–14kg", age:"2歳0か月–3歳5か月", baseWt:13,
     vitals:{ resp:"非緊急: 20–30 / 蘇生: 10以下", pulse:"非緊急: 75–130 / 蘇生: 40以下", lowBP:"収縮期 74以下" },
-    equip:{ ambu:"1000mL", laryngoscope:"#2 直型", aws:"小児(P)・ピンク", tube:"4.5mm（カフなし）", depth:"13.5cm（口角）", stylet:"6F", suction:"10F" },
+    equip:{ ambu:"1000mL", laryngoscope:"#2 直型", aws:"小児(P)・ピンク", macgrath:"MAC2", tube:"4.5mm（カフなし）", depth:"13.5cm（口角）", stylet:"6F", suction:"10F" },
     defib:{ biphasic:"30J", sync:"15J" },
     drugs:{
       arrest:{
         adrenaline:{val:"1.5 mL", prep:"注0.1%(1mg/mL)原液1mL + 生食9mL", calc:"0.01mg/kg"},
-        amiodarone:{val:"15 mL", prep:"注150mg/3mL原液2mL + 5%ブドウ糖20mL", calc:"5mg/kg"},
+        amiodarone:{val:"15 mL", prep:"注150mg/3mL原液2mL + 5%ブドウ糖20mL", calc:"2mg/kg"},
         atp:{val:"0.3 mL", prep:"ATP-Lコーワ注(10mg)原液", calc:"0.3mL"},
         lidocaine:{val:"0.7 mL", prep:"静注用キシロカイン2%原液", calc:"1mg/kg"},
         atropine:{val:"2.6 mL", prep:"注0.05%(0.5mg/mL)原液1mL + 生食4mL", calc:"0.02mg/kg"},
@@ -370,10 +398,12 @@ const REF = {
         atropine:{val:"2.6 mL", prep:"注0.05%(0.5mg/mL)原液1mL + 生食4mL", calc:"0.02mg/kg"},
         midazolam:{val:"1.3 mL", prep:"注10mg/2mL(5mg/mL)原液2mL + 生食8mL", calc:"0.1mg/kg"},
         pentazocine:{val:"7.0 mL", prep:"注15mg/mL原液1mL + 生食14mL", calc:"0.5mg/kg"},
-        rocuronium:{val:"1.3 mL", prep:"臭化物注50mg/5mL(10mg/mL)原液", calc:"1mg/kg"}
+        fentanyl:{val:"13–26mcg, 0.26–0.52mL", prep:"フェンタニル注100mcg/2mL(50mcg/mL)原液", calc:"1–2mcg/kg"},
+        rocuronium:{val:"1.3 mL", prep:"臭化物注50mg/5mL(10mg/mL)原液", calc:"1mg/kg"},
+        ketamine:{val:"1.3 mL", prep:"ケタミン静注用10mg/mL原液", calc:"1mg/kg"}
       },
       seizure:{
-        iv:{val:"2.6 mL", prep:"ミダフレッサ静注10mg/10mL(1mg/mL)原液", calc:"0.2mg/kg"},
+        iv:{val:"2.6 mL", prep:"10倍希釈ミダゾラム注（ミダゾラム注10mg/2mL(5mg/mL)1mL + 生食9mL = 1mg/mL）", calc:"0.2mg/kg"},
         nasal:{val:"0.8 mL", prep:"ミダゾラム注10mg/2mL(5mg/mL)原液", calc:"点鼻用"}
       },
       anaphylaxis:{val:"0.1 mL", prep:"ボスミン注0.1%原液", calc:"0.01mg/kg・大腿筋注"}
@@ -382,12 +412,12 @@ const REF = {
   tod3: {
     label:"幼児(3)", color:"#111827", range:"15–18kg", age:"3歳6か月–5歳5か月", baseWt:16,
     vitals:{ resp:"非緊急: 16–24 / 蘇生: 8以下", pulse:"非緊急: 70–110 / 蘇生: 40以下", lowBP:"収縮期 76以下" },
-    equip:{ ambu:"1000mL", laryngoscope:"#2 直型", aws:"小児(P)・ピンク", tube:"5.0mm（カフなし）", depth:"15.0cm（口角）", stylet:"6F", suction:"10F" },
+    equip:{ ambu:"1000mL", laryngoscope:"#2 直型", aws:"小児(P)・ピンク", macgrath:"MAC2", tube:"5.0mm（カフなし）", depth:"15.0cm（口角）", stylet:"6F", suction:"10F" },
     defib:{ biphasic:"50J", sync:"20J" },
     drugs:{
       arrest:{
         adrenaline:{val:"2.0 mL", prep:"注0.1%(1mg/mL)原液1mL + 生食9mL", calc:"0.01mg/kg"},
-        amiodarone:{val:"18 mL", prep:"注150mg/3mL原液2mL + 5%ブドウ糖20mL", calc:"5mg/kg"},
+        amiodarone:{val:"18 mL", prep:"注150mg/3mL原液2mL + 5%ブドウ糖20mL", calc:"2mg/kg"},
         atp:{val:"0.4 mL", prep:"ATP-Lコーワ注(10mg)原液", calc:"0.4mL"},
         lidocaine:{val:"0.8 mL", prep:"静注用キシロカイン2%原液", calc:"1mg/kg"},
         atropine:{val:"3.2 mL", prep:"注0.05%(0.5mg/mL)原液1mL + 生食4mL", calc:"0.02mg/kg"},
@@ -399,10 +429,12 @@ const REF = {
         atropine:{val:"3.2 mL", prep:"注0.05%(0.5mg/mL)原液1mL + 生食4mL", calc:"0.02mg/kg"},
         midazolam:{val:"1.6 mL", prep:"注10mg/2mL(5mg/mL)原液2mL + 生食8mL", calc:"0.1mg/kg"},
         pentazocine:{val:"8.0 mL", prep:"注15mg/mL原液1mL + 生食14mL", calc:"0.5mg/kg"},
-        rocuronium:{val:"1.6 mL", prep:"臭化物注50mg/5mL(10mg/mL)原液", calc:"1mg/kg"}
+        fentanyl:{val:"16–32mcg, 0.32–0.64mL", prep:"フェンタニル注100mcg/2mL(50mcg/mL)原液", calc:"1–2mcg/kg"},
+        rocuronium:{val:"1.6 mL", prep:"臭化物注50mg/5mL(10mg/mL)原液", calc:"1mg/kg"},
+        ketamine:{val:"1.6 mL", prep:"ケタミン静注用10mg/mL原液", calc:"1mg/kg"}
       },
       seizure:{
-        iv:{val:"3.2 mL", prep:"ミダフレッサ静注10mg/10mL(1mg/mL)原液", calc:"0.2mg/kg"},
+        iv:{val:"3.2 mL", prep:"10倍希釈ミダゾラム注（ミダゾラム注10mg/2mL(5mg/mL)1mL + 生食9mL = 1mg/mL）", calc:"0.2mg/kg"},
         nasal:{val:"1.0 mL", prep:"ミダゾラム注10mg/2mL(5mg/mL)原液", calc:"点鼻用"}
       },
       anaphylaxis:{val:"0.2 mL", prep:"ボスミン注0.1%原液", calc:"0.01mg/kg・大腿筋注"}
@@ -411,7 +443,7 @@ const REF = {
   sch1: {
     label:"学童(1)", color:"#2563eb", range:"19–23kg", age:"5歳6か月–6歳11か月", baseWt:20,
     vitals:{ resp:"非緊急: 16–24 / 蘇生: 8以下", pulse:"非緊急: 70–110 / 蘇生: 40以下", lowBP:"収縮期 80以下" },
-    equip:{ ambu:"1000mL", laryngoscope:"#2 直型/曲型", aws:"小児(P)・ピンク", tube:"5.5mm（カフなし）", depth:"16.5cm（口角）", stylet:"14F", suction:"10F" },
+    equip:{ ambu:"1000mL", laryngoscope:"#2 直型/曲型", aws:"小児(P)・ピンク", macgrath:"MAC2", tube:"5.5mm（カフなし）", depth:"16.5cm（口角）", stylet:"14F", suction:"10F" },
     defib:{ biphasic:"50J", sync:"30J" },
     drugs:{
       arrest:{
@@ -428,10 +460,12 @@ const REF = {
         atropine:{val:"4.0 mL", prep:"注0.05%(0.5mg/mL)原液1mL + 生食4mL", calc:"0.02mg/kg"},
         midazolam:{val:"2.0 mL", prep:"注10mg/2mL(5mg/mL)原液2mL + 生食8mL", calc:"0.1mg/kg"},
         pentazocine:{val:"10 mL", prep:"注15mg/mL原液1mL + 生食14mL", calc:"0.5mg/kg"},
-        rocuronium:{val:"2.0 mL", prep:"臭化物注50mg/5mL(10mg/mL)原液", calc:"1mg/kg"}
+        fentanyl:{val:"20–40mcg, 0.40–0.80mL", prep:"フェンタニル注100mcg/2mL(50mcg/mL)原液", calc:"1–2mcg/kg"},
+        rocuronium:{val:"2.0 mL", prep:"臭化物注50mg/5mL(10mg/mL)原液", calc:"1mg/kg"},
+        ketamine:{val:"2.0 mL", prep:"ケタミン静注用10mg/mL原液", calc:"1mg/kg"}
       },
       seizure:{
-        iv:{val:"4.0 mL", prep:"ミダフレッサ静注10mg/10mL(1mg/mL)原液", calc:"0.2mg/kg"},
+        iv:{val:"4.0 mL", prep:"10倍希釈ミダゾラム注（ミダゾラム注10mg/2mL(5mg/mL)1mL + 生食9mL = 1mg/mL）", calc:"0.2mg/kg"},
         nasal:{val:"1.2 mL", prep:"ミダゾラム注10mg/2mL(5mg/mL)原液", calc:"点鼻用"}
       },
       anaphylaxis:{val:"0.2 mL", prep:"ボスミン注0.1%原液", calc:"0.01mg/kg・大腿筋注"}
@@ -440,7 +474,7 @@ const REF = {
   sch2: {
     label:"学童(2)", color:"#f59e0b", range:"24–29kg", age:"7–8歳", baseWt:25,
     vitals:{ resp:"非緊急: 16–24 / 蘇生: 8以下", pulse:"非緊急: 70–110 / 蘇生: 40以下", lowBP:"収縮期 86以下" },
-    equip:{ ambu:"1000mL", laryngoscope:"#2 直型/曲型", aws:"成人(T)・緑", tube:"6.0mm（カフ付き）", depth:"18.0cm（口角）", stylet:"14F", suction:"10F" },
+    equip:{ ambu:"1000mL", laryngoscope:"#2 直型/曲型", aws:"成人(T)・緑", macgrath:"MAC2", tube:"6.0mm（カフ付き）", depth:"18.0cm（口角）", stylet:"14F", suction:"10F" },
     defib:{ biphasic:"70J", sync:"30J" },
     drugs:{
       arrest:{
@@ -457,10 +491,12 @@ const REF = {
         atropine:{val:"1.0 mL", prep:"注0.05%(0.5mg/1mL)原液", calc:"0.02mg/kg"},
         midazolam:{val:"2.5 mL", prep:"注10mg/2mL(5mg/mL)原液2mL + 生食8mL", calc:"0.1mg/kg"},
         pentazocine:{val:"13 mL", prep:"注15mg/mL原液1mL + 生食14mL", calc:"0.5mg/kg"},
-        rocuronium:{val:"2.5 mL", prep:"臭化物注50mg/5mL(10mg/mL)原液", calc:"1mg/kg"}
+        fentanyl:{val:"25–50mcg, 0.50–1.00mL", prep:"フェンタニル注100mcg/2mL(50mcg/mL)原液", calc:"1–2mcg/kg"},
+        rocuronium:{val:"2.5 mL", prep:"臭化物注50mg/5mL(10mg/mL)原液", calc:"1mg/kg"},
+        ketamine:{val:"2.5 mL", prep:"ケタミン静注用10mg/mL原液", calc:"1mg/kg"}
       },
       seizure:{
-        iv:{val:"5.0 mL", prep:"ミダフレッサ静注10mg/10mL(1mg/mL)原液", calc:"0.2mg/kg"},
+        iv:{val:"5.0 mL", prep:"10倍希釈ミダゾラム注（ミダゾラム注10mg/2mL(5mg/mL)1mL + 生食9mL = 1mg/mL）", calc:"0.2mg/kg"},
         nasal:{val:"1.5 mL", prep:"ミダゾラム注10mg/2mL(5mg/mL)原液", calc:"点鼻用"}
       },
       anaphylaxis:{val:"0.3 mL", prep:"ボスミン注0.1%原液", calc:"0.01mg/kg・大腿筋注"}
@@ -469,7 +505,7 @@ const REF = {
   sch3: {
     label:"学童(3)", color:"#16a34a", range:"30–39kg", age:"9–10歳", baseWt:35,
     vitals:{ resp:"非緊急: 14–20 / 蘇生: 8以下", pulse:"非緊急: 60–90 / 蘇生: 30以下", lowBP:"収縮期 90以下" },
-    equip:{ ambu:"1000mL", laryngoscope:"#3 直型/曲型", aws:"成人(T)・緑", tube:"6.5mm（カフ付き）", depth:"19.5cm（口角）", stylet:"14F", suction:"12F" },
+    equip:{ ambu:"1000mL", laryngoscope:"#3 直型/曲型", aws:"成人(T)・緑", macgrath:"MAC3", tube:"6.5mm（カフ付き）", depth:"19.5cm（口角）", stylet:"14F", suction:"12F" },
     defib:{ biphasic:"100J", sync:"50J" },
     drugs:{
       arrest:{
@@ -486,10 +522,12 @@ const REF = {
         atropine:{val:"1.0 mL", prep:"注0.05%(0.5mg/1mL)原液", calc:"0.02mg/kg"},
         midazolam:{val:"3.5 mL", prep:"注10mg/2mL(5mg/mL)原液2mL + 生食8mL", calc:"0.1mg/kg"},
         pentazocine:{val:"1.0 mL", prep:"注射液(15mg/1mL)原液", calc:"0.5mg/kg"},
-        rocuronium:{val:"3.5 mL", prep:"臭化物注50mg/5mL(10mg/mL)原液", calc:"1mg/kg"}
+        fentanyl:{val:"35–70mcg, 0.70–1.40mL", prep:"フェンタニル注100mcg/2mL(50mcg/mL)原液", calc:"1–2mcg/kg"},
+        rocuronium:{val:"3.5 mL", prep:"臭化物注50mg/5mL(10mg/mL)原液", calc:"1mg/kg"},
+        ketamine:{val:"3.5 mL", prep:"ケタミン静注用10mg/mL原液", calc:"1mg/kg"}
       },
       seizure:{
-        iv:{val:"7.0 mL", prep:"ミダフレッサ静注10mg/10mL(1mg/mL)原液", calc:"0.2mg/kg"},
+        iv:{val:"7.0 mL", prep:"10倍希釈ミダゾラム注（ミダゾラム注10mg/2mL(5mg/mL)1mL + 生食9mL = 1mg/mL）", calc:"0.2mg/kg"},
         nasal:{val:"2.0 mL", prep:"ミダゾラム注10mg/2mL(5mg/mL)原液", calc:"点鼻用"}
       },
       anaphylaxis:{val:"0.4 mL", prep:"ボスミン注0.1%原液", calc:"0.01mg/kg・大腿筋注"}
@@ -498,7 +536,7 @@ const REF = {
   adult: {
     label:"成人", color:"#6366f1", range:"40–70kg", age:"11歳以上", baseWt:50,
     vitals:{ resp:"非緊急: 14–20 / 蘇生: 8以下", pulse:"非緊急: 60–90 / 蘇生: 30以下", lowBP:"収縮期 90以下" },
-    equip:{ ambu:"1000mL", laryngoscope:"#3 直型/曲型", aws:"成人(T)・緑", tube:"7.5mm（カフ付き）", depth:"22.5cm（口角）", stylet:"14F", suction:"12F" },
+    equip:{ ambu:"1000mL", laryngoscope:"#3 直型/曲型", aws:"成人(T)・緑", macgrath:"MAC3", tube:"7.5mm（カフ付き）", depth:"22.5cm（口角）", stylet:"14F", suction:"12F" },
     defib:{ biphasic:"150J", sync:"70J" },
     drugs:{
       arrest:{
@@ -515,10 +553,12 @@ const REF = {
         atropine:{val:"1.0 mL", prep:"注0.05%(0.5mg/mL)原液", calc:"0.5mg"},
         midazolam:{val:"0.5 mL", prep:"注10mg/2mL(5mg/mL)原液", calc:"5mg"},
         pentazocine:{val:"2 mL", prep:"注15mg/mL原液", calc:"30mg"},
-        rocuronium:{val:"5 mL", prep:"臭化物注50mg/5mL(10mg/mL)原液", calc:"50mg"}
+        fentanyl:{val:"50–100mcg, 1.00–2.00mL", prep:"フェンタニル注100mcg/2mL(50mcg/mL)原液", calc:"1–2mcg/kg"},
+        rocuronium:{val:"5 mL", prep:"臭化物注50mg/5mL(10mg/mL)原液", calc:"50mg"},
+        ketamine:{val:"5.0 mL", prep:"ケタミン静注用10mg/mL原液", calc:"1mg/kg"}
       },
       seizure:{
-        iv:{val:"10 mL", prep:"ミダフレッサ静注10mg/10mL(1mg/mL)原液", calc:"10mg"},
+        iv:{val:"10 mL", prep:"10倍希釈ミダゾラム注（ミダゾラム注10mg/2mL(5mg/mL)1mL + 生食9mL = 1mg/mL）", calc:"10mg"},
         nasal:{val:"2 mL", prep:"ミダゾラム注10mg/2mL(5mg/mL)原液", calc:"点鼻用"}
       },
       anaphylaxis:{val:"0.5 mL", prep:"ボスミン注0.1%原液", calc:"0.5mg・大腿筋注"}
@@ -543,9 +583,10 @@ chips.addEventListener('click', (e)=>{
 /* ========= 早見表描画（詳細版） ========= */
 const refPane = document.getElementById('refPane');
 function L(label,drug){
+  const isNew = label.includes("フェンタニル") || label.includes("ケタミン");
   return `
-    <div class="row">
-      <div class="k">${label}</div>
+    <div class="row" ${isNew ? 'style="background:#fef3c7;border-left:3px solid #f59e0b"' : ''}>
+      <div class="k">${label}${isNew ? ' <span style="font-size:9px;background:#f59e0b;color:#fff;padding:2px 4px;border-radius:4px;font-weight:700">NEW</span>' : ''}</div>
       <div style="text-align:right">
         <div class="v">${drug.val}</div>
         <div class="prep">${drug.prep}</div>
@@ -554,7 +595,10 @@ function L(label,drug){
     </div>
   `;
 }
-function LS(label,val){ return `<div class="row"><div class="k">${label}</div><div class="v">${val}</div></div>` }
+function LS(label,val){ 
+  const isNew = label.includes("MacGrath");
+  return `<div class="row" ${isNew ? 'style="background:#fef3c7;border-left:3px solid #f59e0b"' : ''}><div class="k">${label}${isNew ? ' <span style="font-size:9px;background:#f59e0b;color:#fff;padding:2px 4px;border-radius:4px;font-weight:700">NEW</span>' : ''}</div><div class="v">${val}</div></div>` 
+}
 
 function renderReference(key, auto=false){
   const d = REF[key];
@@ -580,6 +624,7 @@ function renderReference(key, auto=false){
           ${LS("アンビューバッグ", d.equip.ambu)}
           ${LS("喉頭鏡", d.equip.laryngoscope)}
           ${LS("AWSイントロック", d.equip.aws)}
+          ${LS("MacGrathブレード", d.equip.macgrath)}
           ${LS("気管チューブ", d.equip.tube)}
           ${LS("挿入長（口角）", d.equip.depth)}
           ${LS("スタイレット", d.equip.stylet)}
@@ -615,7 +660,9 @@ function renderReference(key, auto=false){
           ${L("アトロピン", d.drugs.airway.atropine)}
           ${L("ミダゾラム", d.drugs.airway.midazolam)}
           ${L("ペンタゾシン", d.drugs.airway.pentazocine)}
+          ${L("フェンタニル", d.drugs.airway.fentanyl)}
           ${L("ロクロニウム", d.drugs.airway.rocuronium)}
+          ${d.drugs.airway.ketamine ? L("ケタミン", d.drugs.airway.ketamine) : ''}
         </div>
       </div>
 
@@ -639,7 +686,7 @@ function renderReference(key, auto=false){
   const lines = [];
   lines.push(`【${d.label}｜${d.range}｜${d.age}】`);
   lines.push(`▶ バイタル：呼吸 ${d.vitals.resp}／脈拍 ${d.vitals.pulse}／低血圧 ${d.vitals.lowBP}`);
-  lines.push(`▶ 器材：アンビュ ${d.equip.ambu}／喉頭鏡 ${d.equip.laryngoscope}／AWS ${d.equip.aws}／ETT ${d.equip.tube}／挿入長 ${d.equip.depth}／スタイレット ${d.equip.stylet}／吸引 ${d.equip.suction}`);
+  lines.push(`▶ 器材：アンビュ ${d.equip.ambu}／喉頭鏡 ${d.equip.laryngoscope}／AWS ${d.equip.aws}／MacGrath ${d.equip.macgrath}／ETT ${d.equip.tube}／挿入長 ${d.equip.depth}／スタイレット ${d.equip.stylet}／吸引 ${d.equip.suction}`);
   lines.push(`▶ 電気ショック：二相性 ${d.defib.biphasic}／同期 ${d.defib.sync}`);
   lines.push(`▶ 心停止: EPI ${d.drugs.arrest.adrenaline.val}／Amio ${d.drugs.arrest.amiodarone.val}／ATP ${d.drugs.arrest.atp.val}／Lido ${d.drugs.arrest.lidocaine.val}／Atropine ${d.drugs.arrest.atropine.val}／Mg ${d.drugs.arrest.mg.val}／NS ${d.drugs.arrest.saline.val}／G50 ${d.drugs.arrest.g50.val}`);
   const text = lines.join("\n");
@@ -729,7 +776,12 @@ function updateWeight(){
 
 function clearCalc(){
   setVal('tubeID','-'); setVal('depthAge','-'); setVal('depthID','-');
-  setVal('defib','-'); setVal('dzp','-'); setVal('mdz','-'); setVal('mdzNasal','-'); setVal('epi','-'); setVal('epiAna','-');
+  setVal('defib','-'); setVal('defibDial','-'); 
+  setVal('dzp','-'); setVal('dzpMg','-'); 
+  setVal('mdz','-'); setVal('mdzMg','-'); 
+  setVal('mdzNasal','-'); setVal('mdzNasalMg','-'); 
+  setVal('epi','-'); setVal('epiDil','-'); setVal('epiMg','-'); 
+  setVal('epiAna','-'); setVal('epiAnaMg','-');
   document.getElementById('estBox').style.display='none';
 }
 
@@ -761,8 +813,24 @@ function recompute(){
   }
   
   const estBox = document.getElementById('estBox');
-  if(estimated){ estBox.style.display='inline'; document.getElementById('estW').textContent = wt.toFixed(1); }
-  else{ estBox.style.display='none'; }
+  const estFormula = document.getElementById('estFormula');
+  if(estimated){
+    estBox.style.display='inline';
+    document.getElementById('estW').textContent = wt.toFixed(1);
+    // 計算式を表示
+    if(!Number.isNaN(a)){
+      if(a === 0){
+        const m = parseInt(MONTH.value || "0");
+        estFormula.textContent = `0歳${m}ヶ月`;
+      } else {
+        estFormula.textContent = `${a}歳`;
+      }
+    } else {
+      estFormula.textContent = '';
+    }
+  } else {
+    estBox.style.display='none';
+  }
 
   // 気管チューブは年齢が必要（年齢未選択の場合は表示しない）
   if(!Number.isNaN(a)){
@@ -790,35 +858,89 @@ function recompute(){
   }
 
   // 以下の計算は体重のみで可能
-  // 除細動: 4J/kg（上限150J）
-  const defibValue = Math.min(wt*4, 150);
-  setVal('defib', defibValue.toFixed(0));
-
-  const dzpMin = wt*0.3/5, dzpMax = wt*0.5/5;
-  setVal('dzp', `${dzpMin.toFixed(2)}–${dzpMax.toFixed(2)}`);
-  const mdzMin = wt*0.15/5, mdzMax = wt*0.3/5;
-  setVal('mdz', `${mdzMin.toFixed(2)}–${mdzMax.toFixed(2)}`);
-  const mdzNasalMl = wt*0.3/5;
-  setVal('mdzNasal', mdzNasalMl.toFixed(2));
+  // 除細動: 4J/kg（上限150J、成人初回は150J推奨）
+  // ダイヤルの値: 2, 3, 5, 7, 10, 15, 20, 30, 50, 70, 100, 150, 200, 270
+  const defibDialValues = [2, 3, 5, 7, 10, 15, 20, 30, 50, 70, 100, 150, 200, 270];
+  const defibCalcValue = wt*4;
+  // 成人量上限150J（小児も成人量を超えないように）
+  const defibMaxValue = 150;
+  const defibValue = Math.min(defibCalcValue, defibMaxValue);
   
-  // アドレナリン（蘇生）: 16歳以上は原液1mL固定
-  let epiMl;
+  // 計算値に最も近い（絶対値で最小の差）ダイヤル値を選択
+  let defibDial;
+  if(!Number.isNaN(a) && a >= 16){
+    // 成人（16歳以上）の初回は150Jを推奨
+    defibDial = 150;
+  } else {
+    // 小児の場合は計算値に最も近いダイヤル値を選択
+    let minDiff = Infinity;
+    for(const dial of defibDialValues){
+      const diff = Math.abs(dial - defibValue);
+      if(diff < minDiff){
+        minDiff = diff;
+        defibDial = dial;
+      }
+    }
+  }
+  
+  setVal('defib', defibValue.toFixed(0));
+  setVal('defibDial', `${defibDial}J`);
+
+  // ジアゼパム: 0.3-0.5mg/kg（5mg/mL）、成人量上限10mg（2mL）
+  const dzpMinRaw = wt*0.3/5, dzpMaxRaw = wt*0.5/5;
+  const dzpMin = Math.min(dzpMinRaw, 2.0); // 上限2mL（10mg）
+  const dzpMax = Math.min(dzpMaxRaw, 2.0); // 上限2mL（10mg）
+  const dzpMinMg = Math.min(wt*0.3, 10.0); // 上限10mg
+  const dzpMaxMg = Math.min(wt*0.5, 10.0); // 上限10mg
+  setVal('dzp', `${dzpMin.toFixed(2)}–${dzpMax.toFixed(2)}`);
+  setVal('dzpMg', `${dzpMinMg.toFixed(2)}–${dzpMaxMg.toFixed(2)}`);
+  
+  // ミダゾラム（IV）: 0.15-0.3mg/kg（5mg/mL）、成人量上限10mg（2mL、5mg/mL製剤）
+  const mdzMinRaw = wt*0.15/5, mdzMaxRaw = wt*0.3/5;
+  const mdzMin = Math.min(mdzMinRaw, 2.0); // 上限2mL（10mg、5mg/mL製剤）
+  const mdzMax = Math.min(mdzMaxRaw, 2.0); // 上限2mL（10mg、5mg/mL製剤）
+  const mdzMinMg = Math.min(wt*0.15, 10.0); // 上限10mg
+  const mdzMaxMg = Math.min(wt*0.3, 10.0); // 上限10mg
+  setVal('mdz', `${mdzMin.toFixed(2)}–${mdzMax.toFixed(2)}`);
+  setVal('mdzMg', `${mdzMinMg.toFixed(2)}–${mdzMaxMg.toFixed(2)}`);
+  
+  // ミダゾラム（点鼻）: 0.3mg/kg（5mg/mL）、成人量上限2mL（10mg）
+  const mdzNasalMlRaw = wt*0.3/5;
+  const mdzNasalMl = Math.min(mdzNasalMlRaw, 2.0); // 上限2mL（10mg）
+  const mdzNasalMg = Math.min(wt*0.3, 10.0); // 上限10mg
+  setVal('mdzNasal', mdzNasalMl.toFixed(2));
+  setVal('mdzNasalMg', mdzNasalMg.toFixed(2));
+  
+  // アドレナリン（蘇生）: 0.01mg/kg、原液（1mg/mL）または希釈液（1mg/10mL）、成人量上限1mg
+  let epiMl, epiMlDil, epiMg;
   if(!Number.isNaN(a) && a >= 16){
     epiMl = 1.0; // 成人は原液1mL
+    epiMlDil = 10.0; // 成人は希釈液10mL（1mg/10mL）
+    epiMg = 1.0; // 成人は1mg
     setVal('epi', '1.0');
+    setVal('epiDil', '10.0');
+    setVal('epiMg', '1.0');
   } else {
-    epiMl = wt*0.01/1;
+    epiMl = Math.min(wt*0.01/1, 1.0); // 原液：小児でも成人量を超えないように上限1mL
+    epiMlDil = Math.min(wt*0.01/0.1, 10.0); // 希釈液（1mg/10mL = 0.1mg/mL）：上限10mL
+    epiMg = Math.min(wt*0.01, 1.0); // 小児でも成人量を超えないように上限1mg
     setVal('epi', epiMl.toFixed(2));
+    setVal('epiDil', epiMlDil.toFixed(2));
+    setVal('epiMg', epiMg.toFixed(2));
   }
   
-  // アナフィラキシー用アドレナリン: 15歳まで上限0.3mg、16歳以上は上限0.5mg
+  // アナフィラキシー用アドレナリン: 0.01mg/kg（1mg/mL）、小児上限0.3mg（0.3mL）、成人上限0.5mg（0.5mL）
   let epiAnaMl = wt*0.01/1;
+  let epiAnaMg = wt*0.01;
   if(!Number.isNaN(a) && a >= 16){
     epiAnaMl = Math.min(epiAnaMl, 0.5); // 成人は上限0.5mg = 0.5mL
+    epiAnaMg = Math.min(epiAnaMg, 0.5); // 成人は上限0.5mg
   } else {
     epiAnaMl = Math.min(epiAnaMl, 0.3); // 小児は上限0.3mg = 0.3mL
+    epiAnaMg = Math.min(epiAnaMg, 0.3); // 小児は上限0.3mg
   }
   setVal('epiAna', epiAnaMl.toFixed(2));
+  setVal('epiAnaMg', epiAnaMg.toFixed(2));
 
   const key = findCategoryByWeight(wt);
   if(key && (currentKey !== key)){
